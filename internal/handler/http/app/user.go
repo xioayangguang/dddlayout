@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"layout/internal/handler"
+	"layout/internal/handler/http"
 	"layout/internal/response"
 	"layout/internal/service"
 )
@@ -14,11 +14,11 @@ type UserHandler interface {
 }
 
 type userHandler struct {
-	*handler.Handler
+	*http.Handler
 	userService service.UserService
 }
 
-func NewUserHandler(handler *handler.Handler, userService service.UserService) UserHandler {
+func NewUserHandler(handler *http.Handler, userService service.UserService) UserHandler {
 	return &userHandler{
 		Handler:     handler,
 		userService: userService,

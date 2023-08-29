@@ -8,7 +8,7 @@ package wireinject
 
 import (
 	"github.com/google/wire"
-	"layout/internal/job"
+	"layout/internal/handler/timer"
 )
 
 import (
@@ -17,12 +17,12 @@ import (
 
 // Injectors from wire.go:
 
-func NewApp() (*job.Job, func(), error) {
-	jobJob := job.NewJob()
+func NewApp() (*timer.Job, func(), error) {
+	jobJob := timer.NewJob()
 	return jobJob, func() {
 	}, nil
 }
 
 // wire.go:
 
-var JobSet = wire.NewSet(job.NewJob)
+var JobSet = wire.NewSet(timer.NewJob)

@@ -6,9 +6,9 @@ package wireinject
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
-	"layout/internal/handler"
-	"layout/internal/handler/app"
-	"layout/internal/handler/h5"
+	"layout/internal/handler/http"
+	"layout/internal/handler/http/app"
+	"layout/internal/handler/http/h5"
 	"layout/internal/repository"
 	"layout/internal/router"
 	"layout/internal/service"
@@ -16,7 +16,7 @@ import (
 )
 
 var HandlerSet = wire.NewSet(
-	handler.ProviderSet,
+	http.ProviderSet,
 	app.ProviderSet,
 	app.StructProvider,
 	h5.ProviderSet,

@@ -3,8 +3,8 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"layout/global"
-	apphandler "layout/internal/handler/app"
-	h5handler "layout/internal/handler/h5"
+	apphandler "layout/internal/handler/http/app"
+	h5handler "layout/internal/handler/http/h5"
 	"layout/internal/router/app"
 	"layout/internal/router/h5"
 	"layout/pkg/helper/rotatelogs"

@@ -2,8 +2,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"layout/internal/handler/app"
-	"layout/internal/handler/h5"
+	"layout/internal/handler/http/app"
+	"layout/internal/handler/http/h5"
 	"layout/internal/middleware"
 )
 

@@ -9,9 +9,9 @@ package wireinject
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
-	"layout/internal/handler"
-	"layout/internal/handler/app"
-	"layout/internal/handler/h5"
+	"layout/internal/handler/http"
+	app2 "layout/internal/handler/http/app"
+	"layout/internal/handler/http/h5"
 	"layout/internal/repository"
 	"layout/internal/router"
 	"layout/internal/service"
@@ -25,14 +25,14 @@ import (
 // Injectors from wire.go:
 
 func NewApp() (*gin.Engine, func(), error) {
-	handlerHandler := handler.NewHandler()
+	handlerHandler := http.NewHandler()
 	gormDB := db.NewDB()
 	serviceService := service.NewService(gormDB)
 	repositoryRepository := repository.NewRepository(gormDB)
 	userRepository := repository.NewUserRepository(repositoryRepository)
 	userService := service.NewUserService(serviceService, userRepository)
-	userHandler := app.NewUserHandler(handlerHandler, userService)
-	appRouter := &app.Router{
+	userHandler := app2.NewUserHandler(handlerHandler, userService)
+	appRouter := &app2.Router{
 		AppUser: userHandler,
 	}
 	h5Router := &h5.Router{}
@@ -43,4 +43,4 @@ func NewApp() (*gin.Engine, func(), error) {
 
 // wire.go:
 
-var HandlerSet = wire.NewSet(handler.ProviderSet, app.ProviderSet, app.StructProvider, h5.ProviderSet, h5.StructProvider)
+var HandlerSet = wire.NewSet(http.ProviderSet, app2.ProviderSet, app2.StructProvider, h5.ProviderSet, h5.StructProvider)

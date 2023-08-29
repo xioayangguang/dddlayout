@@ -5,13 +5,13 @@ package wireinject
 
 import (
 	"github.com/google/wire"
-	"layout/internal/job"
+	"layout/internal/handler/timer"
 	_ "layout/pkg/pprof"
 )
 
-var JobSet = wire.NewSet(job.NewJob)
+var JobSet = wire.NewSet(timer.NewJob)
 
-func NewApp() (*job.Job, func(), error) {
+func NewApp() (*timer.Job, func(), error) {
 	panic(wire.Build(
 		JobSet,
 	))

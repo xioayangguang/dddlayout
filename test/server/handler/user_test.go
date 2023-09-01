@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"io"
 	"layout/cmd/server/wireinject"
+	"layout/infrastructure/config"
+	"layout/infrastructure/redis"
 	"layout/internal/service"
-	"layout/pkg/configParse"
-	"layout/pkg/redis"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -60,7 +60,7 @@ func TestUserHandler_Login(t *testing.T) {
 
 func setupRouter() *gin.Engine {
 	os.Setenv("APP_CONF", "../../../config/local.yml")
-	configParse.InitConfig()
+	config.InitConfig()
 	redis.InitRedis()
 	app, _, err := wireinject.NewApp()
 	if err != nil {

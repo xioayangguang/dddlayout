@@ -2,9 +2,9 @@ package main
 
 import (
 	"layout/cmd/job/wireinject"
-	"layout/global"
-	"layout/pkg/configParse"
-	"layout/pkg/redis"
+	"layout/infrastructure/config"
+	"layout/infrastructure/global"
+	"layout/infrastructure/redis"
 )
 
 // go build -ldflags "-X 'main.goVersion=$(go version)' -X 'main.gitHash=$(git show -s --format=%H)' -X 'main.buildTime=$(git show -s --format=%cd)'"
@@ -15,7 +15,7 @@ var (
 )
 
 func main() {
-	configParse.InitConfig()
+	config.InitConfig()
 	global.GitHash = gitHash
 	global.BuildTime = buildTime
 	global.GoVersion = goVersion

@@ -1,0 +1,20 @@
+package router
+
+import (
+	"github.com/gin-gonic/gin"
+	middleware2 "layout/infrastructure/middleware"
+	"layout/internal/handler/http/app"
+	"layout/internal/handler/http/h5"
+)
+
+// InitApiRouter 不登陆也不验证签名的路由，通常是一些回调路由
+func InitApiRouter(Router *gin.Engine, approuter *app.Router, h5router *h5.Router) {
+	PublicApiGroup := Router.Group("common")
+	PublicApiGroup.Use(middleware2.RequestLog())
+	PublicApiGroup.Use(middleware2.SpeedLimit())
+	PublicApiGroup.Use(middleware2.Recover())
+	{
+		indexRouter := PublicApiGroup.Group("horses")
+		_ = indexRouter
+	}
+}

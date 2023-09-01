@@ -9,13 +9,13 @@ package wireinject
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
+	"layout/infrastructure/db/connect"
+	"layout/infrastructure/router"
 	"layout/internal/handler/http"
 	app2 "layout/internal/handler/http/app"
 	"layout/internal/handler/http/h5"
 	"layout/internal/repository"
-	"layout/internal/router"
 	"layout/internal/service"
-	"layout/pkg/db"
 )
 
 import (
@@ -26,7 +26,7 @@ import (
 
 func NewApp() (*gin.Engine, func(), error) {
 	handlerHandler := http.NewHandler()
-	gormDB := db.NewDB()
+	gormDB := connect.NewDB()
 	serviceService := service.NewService(gormDB)
 	repositoryRepository := repository.NewRepository(gormDB)
 	userRepository := repository.NewUserRepository(repositoryRepository)
@@ -36,7 +36,7 @@ func NewApp() (*gin.Engine, func(), error) {
 		AppUser: userHandler,
 	}
 	h5Router := &h5.Router{}
-	engine := router.NewServerHTTP(appRouter, h5Router)
+	engine := http_router.NewServerHTTP(appRouter, h5Router)
 	return engine, func() {
 	}, nil
 }

@@ -10,7 +10,6 @@ import (
 	"layout/internal/handler/http/app"
 	"layout/internal/handler/http/h5"
 	"layout/internal/repository"
-	"layout/internal/router"
 	"layout/internal/service"
 	_ "layout/pkg/pprof"
 )
@@ -25,7 +24,7 @@ var HandlerSet = wire.NewSet(
 
 func NewApp() (*gin.Engine, func(), error) {
 	panic(wire.Build(
-		router.NewServerHTTP,
+		http_router.NewServerHTTP,
 		repository.ProviderSet,
 		service.ProviderSet,
 		HandlerSet,

@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 	"github.com/pkg/errors"
-	"layout/domain/user/entities"
+	"layout/domain/user/model/entities"
 	"layout/domain/user/repository_impl"
 	"layout/infrastructure/db/model"
 )

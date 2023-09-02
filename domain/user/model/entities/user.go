@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"gorm.io/gorm"
-	"layout/domain/user/entities/pdo"
+	"layout/domain/user/model/entities/pdo"
 	"layout/domain/user/repository_impl"
 	"layout/infrastructure/berror"
 	"layout/infrastructure/http/response"

@@ -2,7 +2,7 @@ package repository_impl
 
 import (
 	"context"
-	"layout/domain/user/entities"
+	"layout/domain/user/model/entities"
 )
 
 type UserRepository interface {

@@ -10,7 +10,7 @@ import (
 	"layout/application/http_handler"
 	"layout/application/http_handler/app"
 	"layout/application/http_handler/h5"
-	"layout/domain/user/entities"
+	"layout/domain/user/model/entities"
 	"layout/infrastructure/db/repository"
 	_ "layout/pkg/pprof"
 )

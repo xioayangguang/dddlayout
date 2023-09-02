@@ -14,7 +14,7 @@ import (
 )
 
 func InitExtraRouter(r *gin.Engine) {
-	if config.Config.Debug {
+	if config.Instances.Debug {
 		gindebugcharts.Wrapper(r)
 		ginpprof.Register(r)
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

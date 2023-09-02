@@ -12,7 +12,7 @@ import (
 
 func NewServerHTTP(apphandler *apphandler.Router, h5handler *h5handler.Router) *gin.Engine {
 	var r *gin.Engine
-	if !config.Config.Debug {
+	if !config.Instances.Debug {
 		gin.SetMode(gin.ReleaseMode)
 		r = gin.New()
 		//r.Use(gin.LoggerWithWriter(rotatelogs.GetRotateLogs("output")))

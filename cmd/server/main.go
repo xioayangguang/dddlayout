@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"layout/cmd/server/wireinject"
 	"layout/infrastructure/config"
+	"layout/infrastructure/global"
 	"layout/infrastructure/http/server"
 	"layout/infrastructure/logx"
 	"layout/infrastructure/redis"
@@ -25,12 +26,15 @@ var (
 // @BasePath /
 func main() {
 	config.InitConfig()
-	redis.Redis = redis.InitRedis()
+	global.GitHash = gitHash
+	global.BuildTime = buildTime
+	global.GoVersion = goVersion
+	redis.Instances = redis.InitRedis()
 	engine, cleanup, err := wireinject.NewApp()
 	if err != nil {
 		panic(err)
 	}
-	logx.Channel(logx.Default).Info("server start http://127.0.0.1:", config.Config.Http.Port)
-	server.Run(engine, fmt.Sprintf(":%d", config.Config.Http.Port))
+	logx.Channel(logx.Default).Info("server start http://127.0.0.1:", config.Instances.Http.Port)
+	server.Run(engine, fmt.Sprintf(":%d", config.Instances.Http.Port))
 	defer cleanup()
 }

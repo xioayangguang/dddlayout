@@ -1,6 +1,6 @@
 package config
 
-var Config *config
+var Instances *config
 
 type config struct {
 	Mysql    Mysql  `yaml:"mysql"`

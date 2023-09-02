@@ -6,16 +6,17 @@ package wireinject
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
-	"layout/internal/handler/http"
-	"layout/internal/handler/http/app"
-	"layout/internal/handler/http/h5"
-	"layout/internal/repository"
-	"layout/internal/service"
+	"layout/apis/http"
+	"layout/application/http_handler"
+	"layout/application/http_handler/app"
+	"layout/application/http_handler/h5"
+	"layout/domain/user/service"
+	"layout/infrastructure/db/repository"
 	_ "layout/pkg/pprof"
 )
 
 var HandlerSet = wire.NewSet(
-	http.ProviderSet,
+	http_handler.ProviderSet,
 	app.ProviderSet,
 	app.StructProvider,
 	h5.ProviderSet,
@@ -24,7 +25,7 @@ var HandlerSet = wire.NewSet(
 
 func NewApp() (*gin.Engine, func(), error) {
 	panic(wire.Build(
-		http_router.NewServerHTTP,
+		http.NewServerHTTP,
 		repository.ProviderSet,
 		service.ProviderSet,
 		HandlerSet,

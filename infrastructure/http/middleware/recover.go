@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
+	"layout/infrastructure/http/response"
+	"layout/infrastructure/http/validate"
 	"layout/infrastructure/logx"
-	response2 "layout/infrastructure/response"
 	"net/http/httputil"
 	"runtime"
 )
@@ -25,13 +26,13 @@ func Recover() gin.HandlerFunc {
 		httpRequest, _ := httputil.DumpRequest(c.Request, true)
 		defer func() {
 			if err := recover(); err != nil {
-				if err, ok := err.(*httpvalidate.ValidateError); ok {
+				if err, ok := err.(*validate.ValidateError); ok {
 					//response.FailWithCode(c, response.ParameterError)
-					response2.ValidationErrors(c, err.Error())
+					response.ValidationErrors(c, err.Error())
 				} else {
 					stack := stack(3)
 					logx.Channel(logx.Panic).Printf("[Recovery] %s\r\n\r\n panic recovered:\n%s\n%s%s\r\n\r\n", httpRequest, err, stack)
-					response2.FailWithCode(c, response2.Error)
+					response.FailWithCode(c, response.Error)
 				}
 			}
 		}()

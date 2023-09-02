@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"layout/infrastructure/config"
 	sLog "log"
 	"os"
 	"time"
@@ -12,7 +13,7 @@ import (
 
 func NewDB() *gorm.DB {
 	var loggerAdapter logger.Interface
-	if config.Config.Debug {
+	if config.Instances.Debug {
 		loggerAdapter = logger.New(
 			//将标准输出作为Writer
 			sLog.New(os.Stdout, "\r\n", sLog.LstdFlags),
@@ -33,7 +34,7 @@ func NewDB() *gorm.DB {
 		Logger: loggerAdapter,
 	}
 
-	db, err := gorm.Open(mysql.Open(config.Config.Mysql.User), gormConf)
+	db, err := gorm.Open(mysql.Open(config.Instances.Mysql.User), gormConf)
 	if err != nil {
 		panic(err)
 	}
@@ -43,8 +44,8 @@ func NewDB() *gorm.DB {
 		//os.Exit(1)
 		panic("获取MySQL连接错误" + err.Error())
 	}
-	conn.SetMaxIdleConns(config.Config.Mysql.MaxIdleConns)
-	conn.SetMaxOpenConns(config.Config.Mysql.MaxOpenConns)
+	conn.SetMaxIdleConns(config.Instances.Mysql.MaxIdleConns)
+	conn.SetMaxOpenConns(config.Instances.Mysql.MaxOpenConns)
 	_ = db.Use(&TracePlugin{})
 	return db
 }

@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
-	response2 "layout/infrastructure/response"
+	"layout/infrastructure/http/response"
 	"layout/infrastructure/speedLimit"
 )
 
@@ -12,13 +12,13 @@ func SpeedLimit() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ApiAuth := c.Request.Header.Get("ApiAuth")
 		if ApiAuth != "" && speedLimit.SpeedLimit(c, ApiAuth, 1, 10) {
-			response2.FailWithCode(c, response2.RateIsTooHigh)
+			response.FailWithCode(c, response.RateIsTooHigh)
 			c.Abort()
 			return
 		}
 		ip := c.ClientIP()
 		if speedLimit.SpeedLimit(c, ip, 1, 10) {
-			response2.FailWithCode(c, response2.RateIsTooHigh)
+			response.FailWithCode(c, response.RateIsTooHigh)
 			c.Abort()
 			return
 		}
@@ -34,7 +34,7 @@ func TokenLimit() gin.HandlerFunc {
 		ip := ctx.RemoteIP()
 		l := limiters.GetLimiter(ip, rate.Limit(10), 2)
 		if !l.Allow() {
-			response2.FailWithCode(ctx, response2.RateIsTooHigh)
+			response.FailWithCode(ctx, response.RateIsTooHigh)
 			ctx.Abort()
 		}
 		ctx.Next()

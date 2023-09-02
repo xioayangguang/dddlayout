@@ -8,13 +8,13 @@ import (
 	"time"
 )
 
-var Redis *redis.Client
+var Instances *redis.Client
 
 func InitRedis() *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     config.Config.Redis.Addr,
-		Password: config.Config.Redis.Password,
-		DB:       config.Config.Redis.Db,
+		Addr:     config.Instances.Redis.Addr,
+		Password: config.Instances.Redis.Password,
+		DB:       config.Instances.Redis.Db,
 	})
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

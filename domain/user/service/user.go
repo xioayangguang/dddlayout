@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"gorm.io/gorm"
+	"layout/domain/user/interface/repository_impl"
 	"layout/infrastructure/berror"
-	"layout/infrastructure/db/model"
+	"layout/infrastructure/http/response"
+	"layout/infrastructure/redis"
 	"layout/pkg/contextValue"
-	idBuilder2 "layout/pkg/idBuilder"
+	"layout/pkg/idBuilder"
 	"layout/pkg/md5"
 	"strconv"
 	"time"
@@ -38,17 +40,17 @@ type ChangePasswordRequest struct {
 
 type UserService interface {
 	Login(ctx context.Context, req *LoginRequest) (string, error)
-	GetProfile(ctx context.Context, userId uint64) (*model.User, error)
+	GetProfile(ctx context.Context, userId uint64) (*repository_impl.User, error)
 	UpdateProfile(ctx context.Context, userId uint64, req *UpdateProfileRequest) error
-	GenerateToken(ctx context.Context, userInfo *model.User) string
+	GenerateToken(ctx context.Context, userInfo *repository_impl.User) string
 }
 
 type userService struct {
-	userRepo repository.UserRepository
+	userRepo repository_impl.UserRepository
 	*Service
 }
 
-func NewUserService(service *Service, userRepo repository.UserRepository) UserService {
+func NewUserService(service *Service, userRepo repository_impl.UserRepository) UserService {
 	return &userService{
 		userRepo: userRepo,
 		Service:  service,
@@ -57,36 +59,36 @@ func NewUserService(service *Service, userRepo repository.UserRepository) UserSe
 
 // Login 登录
 func (s *userService) Login(ctx context.Context, req *LoginRequest) (string, error) {
-	userModel := &model.User{}
+	userModel := &repository_impl.User{}
 	var err error
 	if s.transaction(ctx, func(ctx context.Context) error {
 		userModel, err = s.userRepo.GetByUsername(ctx, req.Nickname)
 		if err != nil {
 			if ok := errors.Is(err, gorm.ErrRecordNotFound); ok {
-				userModel.Serial = uint(idBuilder2.Generate("user_id_id_builder", func() int {
+				userModel.Serial = uint(idBuilder.Generate("user_id_id_builder", func() int {
 					return s.userRepo.GetMaxSerial(ctx)
 				}))
-				userModel.InvitationCode = idBuilder2.Id2Code(int(userModel.Serial))
-				userModel.Uuid = idBuilder2.From32To10(userModel.InvitationCode)
+				userModel.InvitationCode = idBuilder.Id2Code(int(userModel.Serial))
+				userModel.Uuid = idBuilder.From32To10(userModel.InvitationCode)
 				userModel.Nickname = "SAG_" + strconv.Itoa(int(userModel.Uuid))
 				//userModel.Nickname = req.Nickname
 				return s.userRepo.Create(ctx, userModel)
 			}
-			return berror.New(http_response.LoginError)
+			return berror.New(response.LoginError)
 		} else {
 			return nil
 		}
 	}) != nil {
-		return "", berror.New(http_response.LoginError)
+		return "", berror.New(response.LoginError)
 	}
 	return s.GenerateToken(ctx, userModel), nil
 }
 
 // GetProfile 获取用户信息
-func (s *userService) GetProfile(ctx context.Context, userId uint64) (*model.User, error) {
+func (s *userService) GetProfile(ctx context.Context, userId uint64) (*repository_impl.User, error) {
 	user, err := s.userRepo.GetByID(ctx, userId)
 	if err != nil {
-		return nil, berror.New(http_response.Error)
+		return nil, berror.New(response.Error)
 	}
 	return user, nil
 }
@@ -95,18 +97,18 @@ func (s *userService) GetProfile(ctx context.Context, userId uint64) (*model.Use
 func (s *userService) UpdateProfile(ctx context.Context, userId uint64, req *UpdateProfileRequest) error {
 	user, err := s.userRepo.GetByID(ctx, userId)
 	if err != nil {
-		return berror.New(http_response.Error)
+		return berror.New(response.Error)
 	}
 	user.Mail = req.Email
 	user.Nickname = req.Nickname
 	if err = s.userRepo.Update(ctx, user); err != nil {
-		return berror.New(http_response.Error)
+		return berror.New(response.Error)
 	}
 	return nil
 }
 
 // GenerateToken 生成用户token
-func (s *userService) GenerateToken(ctx context.Context, userInfo *model.User) string {
+func (s *userService) GenerateToken(ctx context.Context, userInfo *repository_impl.User) string {
 	channel := "app"                        //此处演示写死
 	var duration time.Duration = 86400 * 30 //此处演示写死
 	token := md5.Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(int(userInfo.Id)))
@@ -119,10 +121,10 @@ func (s *userService) GenerateToken(ctx context.Context, userInfo *model.User) s
 		Serial:         userInfo.Serial,
 	})
 	strUserId := strconv.FormatUint(userInfo.Id, 10)
-	if oldToken, _ := global.Redis.HGet(ctx, channel, strUserId).Result(); oldToken != "" {
-		global.Redis.Del(ctx, oldToken)
+	if oldToken, _ := redis.Instances.HGet(ctx, channel, strUserId).Result(); oldToken != "" {
+		redis.Instances.Del(ctx, oldToken)
 	}
-	global.Redis.Set(ctx, token, jsonStr, duration*time.Second)
-	global.Redis.HSet(ctx, channel, strUserId, token)
+	redis.Instances.Set(ctx, token, jsonStr, duration*time.Second)
+	redis.Instances.HSet(ctx, channel, strUserId, token)
 	return token
 }

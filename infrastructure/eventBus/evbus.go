@@ -1,6 +1,6 @@
 // Package evbus inspired by https://github.com/asaskevich/EventBus.git
 // and make some changes to suitable for our project.
-package evbus
+package eventBus
 
 import (
 	"context"

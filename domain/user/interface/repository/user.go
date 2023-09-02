@@ -2,7 +2,7 @@ package repository_impl
 
 import (
 	"context"
-	"layout/internal/model"
+	"layout/infrastructure/db/model"
 )
 
 type UserRepository interface {

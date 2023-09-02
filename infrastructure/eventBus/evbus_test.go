@@ -1,4 +1,4 @@
-package evbus
+package eventBus
 
 import (
 	"context"

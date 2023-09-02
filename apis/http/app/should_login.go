@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"layout/internal/handler/http/app"
+	"layout/application/http_handler/app"
 )
 
 func ShouldLoginRouter(Router *gin.RouterGroup, router *app.Router) {

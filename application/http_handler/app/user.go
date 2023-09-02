@@ -2,8 +2,9 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"layout/internal/handler/http"
-	"layout/internal/service"
+	http "layout/application/http_handler"
+	"layout/domain/user/service"
+	"layout/infrastructure/http/response"
 )
 
 type UserHandler interface {
@@ -35,10 +36,10 @@ func (h *userHandler) Login(ctx *gin.Context) {
 	var req service.LoginRequest
 	h.ShouldBind(ctx, &req)
 	if token, err := h.userService.Login(ctx, &req); err != nil {
-		http_response.FailWithError(ctx, err)
+		response.FailWithError(ctx, err)
 		return
 	} else {
-		http_response.OkWithData(ctx, gin.H{
+		response.OkWithData(ctx, gin.H{
 			"accessToken": token,
 		})
 	}
@@ -54,10 +55,10 @@ func (h *userHandler) GetProfile(ctx *gin.Context) {
 	userId := h.GetUserId(ctx)
 	user, err := h.userService.GetProfile(ctx, userId)
 	if err != nil {
-		http_response.FailWithError(ctx, err)
+		response.FailWithError(ctx, err)
 		return
 	}
-	http_response.OkWithData(ctx, user)
+	response.OkWithData(ctx, user)
 }
 
 // @Tags 前台用户信息
@@ -72,8 +73,8 @@ func (h *userHandler) UpdateProfile(ctx *gin.Context) {
 	var req service.UpdateProfileRequest
 	h.ShouldBind(ctx, &req)
 	if err := h.userService.UpdateProfile(ctx, userId, &req); err != nil {
-		http_response.FailWithError(ctx, err)
+		response.FailWithError(ctx, err)
 		return
 	}
-	http_response.Ok(ctx)
+	response.Ok(ctx)
 }

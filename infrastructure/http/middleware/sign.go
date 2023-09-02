@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 	"io"
-	"layout/infrastructure/global"
 	response2 "layout/infrastructure/response"
 	"layout/pkg/md5"
 	"sort"
@@ -16,7 +15,7 @@ import (
 func Sign(signSalt string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sign := c.Request.Header.Get("sign")
-		if global.Config.Debug && sign == "debug-mode-ignore" {
+		if config.Config.Debug && sign == "debug-mode-ignore" {
 			c.Next()
 			return
 		}

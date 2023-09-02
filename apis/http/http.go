@@ -2,17 +2,17 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
-	"layout/infrastructure/global"
-	"layout/infrastructure/router/app"
-	"layout/infrastructure/router/h5"
-	apphandler "layout/internal/handler/http/app"
-	h5handler "layout/internal/handler/http/h5"
+	"layout/apis/http/app"
+	"layout/apis/http/h5"
+	apphandler "layout/application/http_handler/app"
+	h5handler "layout/application/http_handler/h5"
+	"layout/infrastructure/config"
 	"layout/pkg/rotatelogs"
 )
 
 func NewServerHTTP(apphandler *apphandler.Router, h5handler *h5handler.Router) *gin.Engine {
 	var r *gin.Engine
-	if !global.Config.Debug {
+	if !config.Config.Debug {
 		gin.SetMode(gin.ReleaseMode)
 		r = gin.New()
 		//r.Use(gin.LoggerWithWriter(rotatelogs.GetRotateLogs("output")))

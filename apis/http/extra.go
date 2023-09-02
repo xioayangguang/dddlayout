@@ -7,12 +7,14 @@ import (
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	_ "layout/docs"
+	"layout/infrastructure/config"
 	"layout/infrastructure/global"
+	"layout/infrastructure/http/response"
 	"net/http"
 )
 
 func InitExtraRouter(r *gin.Engine) {
-	if global.Config.Debug {
+	if config.Config.Debug {
 		gindebugcharts.Wrapper(r)
 		ginpprof.Register(r)
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -26,7 +28,7 @@ func InitExtraRouter(r *gin.Engine) {
 	})
 	r.NoRoute(func(c *gin.Context) {
 		c.Header("Server", "Tomcat8.0")
-		c.JSON(http.StatusNotFound, http_response.Response{
+		c.JSON(http.StatusNotFound, response.Response{
 			Code: 404,
 			Msg:  "路径错误",
 		})

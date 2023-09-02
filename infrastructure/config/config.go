@@ -1,6 +1,8 @@
 package config
 
-type Config struct {
+var Config *config
+
+type config struct {
 	Mysql    Mysql  `yaml:"mysql"`
 	Redis    Redis  `yaml:"redis"`
 	LogLevel string `yaml:"loglevel"`

@@ -3,7 +3,6 @@ package main
 import (
 	"layout/cmd/job/wireinject"
 	"layout/infrastructure/config"
-	"layout/infrastructure/global"
 	"layout/infrastructure/redis"
 )
 
@@ -16,10 +15,7 @@ var (
 
 func main() {
 	config.InitConfig()
-	global.GitHash = gitHash
-	global.BuildTime = buildTime
-	global.GoVersion = goVersion
-	global.Redis = redis.InitRedis()
+	redis.Redis = redis.InitRedis()
 	app, cleanup, err := wireinject.NewApp()
 	if err != nil {
 		panic(err)

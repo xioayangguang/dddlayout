@@ -2,7 +2,6 @@ package logx
 
 import (
 	"github.com/sirupsen/logrus"
-	"layout/infrastructure/global"
 	"layout/infrastructure/logx/formatter"
 	"layout/infrastructure/logx/hook"
 	"layout/pkg/rotatelogs"
@@ -32,7 +31,7 @@ func Channel(channel string) *logrus.Logger {
 	} else {
 		var channelLogger = logrus.New()
 		channelLogger.SetOutput(rotatelogs.GetRotateLogs(channel))
-		channelLogger.SetLevel(getLevel(global.Config.LogLevel))
+		channelLogger.SetLevel(getLevel(config.Config.LogLevel))
 		if f, ok := loggerFormatter[channel]; ok {
 			channelLogger.SetFormatter(f)
 		} else {

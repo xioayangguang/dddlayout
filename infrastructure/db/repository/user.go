@@ -1,9 +1,9 @@
-package repository_impl
+package repository
 
 import (
 	"context"
 	"github.com/pkg/errors"
-	"layout/internal/model"
+	"layout/infrastructure/db/model"
 )
 
 type UserRepository interface {

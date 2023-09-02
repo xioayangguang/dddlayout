@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"layout/infrastructure/global"
 	"os"
 )
 
@@ -14,7 +13,7 @@ func Reload(path string) {
 	InitConfig()
 }
 
-func InitConfig() *Config {
+func InitConfig() *config {
 	path := os.Getenv("APP_CONF")
 	if path == "" {
 		flag.StringVar(&path, "conf", "config/local.yml", "config path, eg: -conf config/local.yml")
@@ -30,12 +29,12 @@ func InitConfig() *Config {
 	conf.WatchConfig()
 	conf.OnConfigChange(func(e fsnotify.Event) {
 		fmt.Println("config file changed:", e.Name)
-		if err := conf.Unmarshal(&global.Config); err != nil {
+		if err := conf.Unmarshal(&Config); err != nil {
 			fmt.Println(err)
 		}
 	})
-	if err := conf.Unmarshal(&global.Config); err != nil {
+	if err := conf.Unmarshal(&Config); err != nil {
 		fmt.Println(err)
 	}
-	return global.Config
+	return Config
 }

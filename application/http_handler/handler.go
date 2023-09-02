@@ -5,7 +5,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/google/wire"
 	"github.com/spf13/cast"
-	validate2 "layout/infrastructure/validate"
+	"layout/infrastructure/http/validate"
 	"layout/pkg/contextValue"
 )
 
@@ -38,11 +38,11 @@ func (base *Handler) ShouldBind(c *gin.Context, obj any) {
 	err := c.ShouldBind(obj)
 	if errs, ok := err.(validator.ValidationErrors); ok {
 		for _, err := range errs {
-			panic(validate2.NewValidateError(err.Translate(validate2.Trans)))
+			panic(validate.NewValidateError(err.Translate(validate.Trans)))
 		}
 	}
 	if err != nil {
-		panic(validate2.NewValidateError("Parameter validation failed"))
+		panic(validate.NewValidateError("Parameter validation failed"))
 	}
 }
 func (base *Handler) GetPageParams(c *gin.Context) (int, int) {

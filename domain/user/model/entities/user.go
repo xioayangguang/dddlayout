@@ -6,7 +6,6 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"layout/domain/user/model/entities/pdo"
-	"layout/domain/user/repository_impl"
 	"layout/infrastructure/berror"
 	"layout/infrastructure/http/response"
 	"layout/infrastructure/redis"
@@ -41,11 +40,11 @@ type UserService interface {
 }
 
 type userService struct {
-	userRepo repository_impl.UserRepository
+	userRepo facade.UserRepository
 	*entities.Service
 }
 
-func NewUserService(service *entities.Service, userRepo repository_impl.UserRepository) UserService {
+func NewUserService(service *entities.Service, userRepo facade.UserRepository) UserService {
 	return &userService{
 		userRepo: userRepo,
 		Service:  service,

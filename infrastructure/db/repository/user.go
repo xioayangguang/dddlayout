@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	"layout/domain/user/model/entities"
-	"layout/domain/user/repository_impl"
 	"layout/infrastructure/db/model"
 )
 
@@ -12,7 +11,7 @@ type userRepository struct {
 	*Repository
 }
 
-func NewUserRepository(r *Repository) repository_impl.UserRepository {
+func NewUserRepository(r *Repository) facade.UserRepository {
 	return &userRepository{
 		Repository: r,
 	}

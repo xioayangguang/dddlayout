@@ -1,11 +1,11 @@
-package repository_impl
+package facade
 
 import (
 	"context"
 	"layout/domain/user/model/entities"
 )
 
-type UserRepository interface {
+type UserRepositoryInterface interface {
 	Create(ctx context.Context, user *entities.User) error
 	Update(ctx context.Context, user *entities.User) error
 	GetByID(ctx context.Context, id uint64) (*entities.User, error)

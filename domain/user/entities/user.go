@@ -1,11 +1,12 @@
-package service
+package entities
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
 	"gorm.io/gorm"
-	"layout/domain/user/interface/repository_impl"
+	"layout/domain/user/entities/pdo"
+	"layout/domain/user/repository_impl"
 	"layout/infrastructure/berror"
 	"layout/infrastructure/http/response"
 	"layout/infrastructure/redis"
@@ -16,41 +17,35 @@ import (
 	"time"
 )
 
-type RegisterRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Email    string `json:"email" binding:"required,email"`
-}
-
-type LoginRequest struct {
-	Nickname string `json:"username" binding:"required"` //ddddd
-	Password string `json:"password" binding:"required"`
-}
-
-type UpdateProfileRequest struct {
-	Nickname string `json:"nickname"`
-	Email    string `json:"email" binding:"required,email"`
-	Avatar   string `json:"avatar"`
-}
-
-type ChangePasswordRequest struct {
-	OldPassword string `json:"oldPassword" binding:"required"`
-	NewPassword string `json:"newPassword" binding:"required"`
+type User struct {
+	Id             uint64
+	CreatedAt      uint
+	UpdatedAt      uint
+	DeletedAt      uint
+	Uuid           uint
+	Serial         uint
+	Nickname       string
+	Mail           string
+	Describe       string
+	Code           string
+	InvitationCode string
+	Avatar         string
+	Status         int
 }
 
 type UserService interface {
-	Login(ctx context.Context, req *LoginRequest) (string, error)
-	GetProfile(ctx context.Context, userId uint64) (*repository_impl.User, error)
-	UpdateProfile(ctx context.Context, userId uint64, req *UpdateProfileRequest) error
-	GenerateToken(ctx context.Context, userInfo *repository_impl.User) string
+	Login(ctx context.Context, req *pdo.LoginRequest) (string, error)
+	GetProfile(ctx context.Context, userId uint64) (*User, error)
+	UpdateProfile(ctx context.Context, userId uint64, req *pdo.UpdateProfileRequest) error
+	GenerateToken(ctx context.Context, userInfo *User) string
 }
 
 type userService struct {
 	userRepo repository_impl.UserRepository
-	*Service
+	*entities.Service
 }
 
-func NewUserService(service *Service, userRepo repository_impl.UserRepository) UserService {
+func NewUserService(service *entities.Service, userRepo repository_impl.UserRepository) UserService {
 	return &userService{
 		userRepo: userRepo,
 		Service:  service,
@@ -58,8 +53,8 @@ func NewUserService(service *Service, userRepo repository_impl.UserRepository) U
 }
 
 // Login 登录
-func (s *userService) Login(ctx context.Context, req *LoginRequest) (string, error) {
-	userModel := &repository_impl.User{}
+func (s *userService) Login(ctx context.Context, req *pdo.LoginRequest) (string, error) {
+	userModel := &User{}
 	var err error
 	if s.transaction(ctx, func(ctx context.Context) error {
 		userModel, err = s.userRepo.GetByUsername(ctx, req.Nickname)
@@ -85,7 +80,7 @@ func (s *userService) Login(ctx context.Context, req *LoginRequest) (string, err
 }
 
 // GetProfile 获取用户信息
-func (s *userService) GetProfile(ctx context.Context, userId uint64) (*repository_impl.User, error) {
+func (s *userService) GetProfile(ctx context.Context, userId uint64) (*User, error) {
 	user, err := s.userRepo.GetByID(ctx, userId)
 	if err != nil {
 		return nil, berror.New(response.Error)
@@ -94,7 +89,7 @@ func (s *userService) GetProfile(ctx context.Context, userId uint64) (*repositor
 }
 
 // UpdateProfile 修改用户信息
-func (s *userService) UpdateProfile(ctx context.Context, userId uint64, req *UpdateProfileRequest) error {
+func (s *userService) UpdateProfile(ctx context.Context, userId uint64, req *pdo.UpdateProfileRequest) error {
 	user, err := s.userRepo.GetByID(ctx, userId)
 	if err != nil {
 		return berror.New(response.Error)
@@ -108,7 +103,7 @@ func (s *userService) UpdateProfile(ctx context.Context, userId uint64, req *Upd
 }
 
 // GenerateToken 生成用户token
-func (s *userService) GenerateToken(ctx context.Context, userInfo *repository_impl.User) string {
+func (s *userService) GenerateToken(ctx context.Context, userInfo *User) string {
 	channel := "app"                        //此处演示写死
 	var duration time.Duration = 86400 * 30 //此处演示写死
 	token := md5.Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(int(userInfo.Id)))

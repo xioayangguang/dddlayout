@@ -10,7 +10,7 @@ import (
 	"layout/application/http_handler"
 	"layout/application/http_handler/app"
 	"layout/application/http_handler/h5"
-	"layout/domain/user/service"
+	"layout/domain/user/entities"
 	"layout/infrastructure/db/repository"
 	_ "layout/pkg/pprof"
 )
@@ -27,7 +27,7 @@ func NewApp() (*gin.Engine, func(), error) {
 	panic(wire.Build(
 		http.NewServerHTTP,
 		repository.ProviderSet,
-		service.ProviderSet,
+		entities.ProviderSet,
 		HandlerSet,
 	))
 }

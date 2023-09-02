@@ -1,4 +1,4 @@
-package router
+package http
 
 import (
 	ginpprof "github.com/gin-contrib/pprof"
